@@ -1,9 +1,13 @@
 package com.example.thean.calling;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
 
@@ -21,7 +25,7 @@ public class Home extends AppCompatActivity {
 
         obj = (ListView)findViewById(R.id.noteList);
         obj.setAdapter(arrayAdapter)
-        obj.setOnItemClickListener(new OnItemClickListener(){
+        obj.setOnItemClickListener(new AdapterView.OnItemClickListener(){
            public void onItemClick(int arg0) {
                //method and intent behind selecting a note entry
                int id_To_open = arg0;

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Calendiary</string>
+    <string name="text_placeholder">Enter something...</string>
 </resources>
