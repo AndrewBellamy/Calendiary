@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DateSelect"></activity>
+        <activity android:name=".DateSelect" />
+        <activity android:name=".DisplayNote"></activity>
     </application>
 
 </manifest>
