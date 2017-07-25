@@ -1,22 +1,28 @@
 package com.example.thean.calling;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
-import java.util.Date;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Home extends AppCompatActivity {
 
+    public static final String EXTRA_MESSAGE = "com.example.thean.helloandroid.MESSAGE";
     DBHelper mydb;
-    java.util.Date current_date;
+    Date current_date;
+    EditText currentDateText;
+    String currentDateString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +30,11 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         current_date = new Date();
+        currentDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(current_date);
+        currentDateText = (EditText) findViewById(R.id.currentDateText);
 
         mydb = new DBHelper(this);
-        ArrayList<String> array_list = mydb.getDataByDate((java.sql.Date) current_date);
+        ArrayList<String> array_list = mydb.getDataByDate(current_date.getTime());
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array_list);
 
         ListView obj = (ListView) findViewById(R.id.noteList);
@@ -43,7 +51,18 @@ public class Home extends AppCompatActivity {
                startActivity(intent);
            }
         });
+        currentDateText.setText((CharSequence) currentDateString);
+        currentDateText.setFocusable(false);
+        currentDateText.setClickable(false);
     }
+
+    /*
+    //TODO: include the returned results to set the currentDate
+    @Override
+    protected void onActivityResult() {
+
+    }
+    */
 
     //Setting the main menu for the home view
     @Override
@@ -58,11 +77,23 @@ public class Home extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.change_date:
-                Intent intent = new Intent(getApplicationContext(),DateSelect.class);
-                startActivity(intent);
+                Intent intentDate = new Intent(getApplicationContext(),DateSelect.class);
+                startActivity(intentDate);
+                return true;
+            case R.id.add_entry:
+                Intent intentAdd = new Intent(getApplicationContext(),AddNote.class);
+                intentAdd.putExtra("longDate", current_date.getTime());
+                startActivity(intentAdd);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public boolean onKeyDown(int keycode, KeyEvent event) {
+        if (keycode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(true);
+        }
+        return super.onKeyDown(keycode, event);
     }
 }

@@ -16,8 +16,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DateSelect" />
-        <activity android:name=".DisplayNote"></activity>
+        <activity
+            android:name=".DateSelect"
+            android:parentActivityName=".Home"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Home"
+                />
+        </activity>
+        <activity
+            android:name=".DisplayNote"
+            android:parentActivityName=".Home">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Home"
+                />
+        </activity>
+        <activity
+            android:name=".AddNote"
+            android:parentActivityName=".Home">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Home"
+                />
+        </activity>
     </application>
 
 </manifest>

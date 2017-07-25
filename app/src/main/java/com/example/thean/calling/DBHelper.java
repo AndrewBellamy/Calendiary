@@ -6,10 +6,11 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.Editable;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by Andrew Bellamy for SIT207 Assignment 1
@@ -42,11 +43,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //modification methods
-    public boolean insertNote(String entry, Date entrydate) {
+    public boolean insertNote(Editable entry, long entrylongdate) {
         SQLiteDatabase db = this.getWritableDatabase();
+        Date entrydate = new Date(entrylongdate);
         ContentValues contentValues = new ContentValues();
         contentValues.put("entrydate", String.valueOf(entrydate));
-        contentValues.put("entry", entry);
+        contentValues.put("entry", String.valueOf(entry));
         db.insert("notes", null, contentValues);
         return true;
     }
@@ -78,9 +80,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return numRows;
     }
 
-    public ArrayList<String> getDataByDate(Date selectedDate) {
+    public ArrayList<String> getDataByDate(long selectedDateLong) {
         ArrayList<String> array_list = new ArrayList<String>();
 
+        Date selectedDate = new Date(selectedDateLong);
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM notes WHERE entrydate="+selectedDate+"", null);
         res.moveToFirst();
