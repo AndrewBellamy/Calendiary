@@ -3,35 +3,38 @@ package com.example.thean.calling;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.Date;
 import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
 
-    private ListView obj;
     DBHelper mydb;
+    java.util.Date current_date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        current_date = new Date();
+
         mydb = new DBHelper(this);
-        ArrayList array_list = mydb.getAllNotes();
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_list);
+        ArrayList<String> array_list = mydb.getDataByDate((java.sql.Date) current_date);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array_list);
 
-        obj = (ListView)findViewById(R.id.noteList);
-        obj.setAdapter(arrayAdapter)
+        ListView obj = (ListView) findViewById(R.id.noteList);
+        obj.setAdapter(arrayAdapter);
         obj.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-           public void onItemClick(int arg0) {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                //method and intent behind selecting a note entry
-               int id_To_open = arg0;
-
                Bundle dataBundle = new Bundle();
-               dataBundle.putInt("id", id_To_open);
+               dataBundle.putInt("id", arg2);
 
                Intent intent = new Intent(getApplicationContext(), DisplayNote.class);
                intent.putExtras(dataBundle);
@@ -39,6 +42,4 @@ public class Home extends AppCompatActivity {
            }
         });
     }
-
-
 }

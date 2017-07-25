@@ -1,5 +1,6 @@
 package com.example.thean.calling;
 
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -26,7 +27,7 @@ public class DisplayNote extends AppCompatActivity {
                 Cursor rs = mydb.getData(Value);
                 rs.moveToFirst();
 
-                String entry = rs.getString(rs.getColumnIndex(DBHelper.COLUMN_NAME));
+                String entry = rs.getString(rs.getColumnIndex(DBHelper.NOTES_ENTRY));
 
                 if (!rs.isClosed()) {
                     rs.close();
