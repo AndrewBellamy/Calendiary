@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Calendiary</string>
     <string name="text_placeholder">Enter something...</string>
+    <string name="add_title">Add Note</string>
+    <string name="change_date">Change Date</string>
+    <string name="cancel_action">Cancel</string>
+    <string name="publish_action">Publish</string>
+    <string name="delete_action">Delete</string>
 </resources>
