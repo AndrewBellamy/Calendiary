@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.Editable;
+import android.util.Log;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -82,13 +83,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public ArrayList<String> getDataByDate(long selectedDateLong) {
         ArrayList<String> array_list = new ArrayList<String>();
-
+        Log.i("long date", String.valueOf(selectedDateLong));
         Date selectedDate = new Date(selectedDateLong);
+        Log.i("date", String.valueOf(selectedDate));
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM notes WHERE entrydate="+selectedDate+"", null);
+        Cursor res = db.rawQuery("SELECT * FROM notes WHERE entrydate=Date('"+String.valueOf(selectedDate)+"')", null);
         res.moveToFirst();
 
         while(res.isAfterLast() == false) {
+            Log.i("db entry", res.getString(res.getColumnIndex("entrydate")));
+            Log.i("db entry", res.getString(res.getColumnIndex("id")));
             array_list.add(res.getString(res.getColumnIndex("entry")));
             res.moveToNext();
         }

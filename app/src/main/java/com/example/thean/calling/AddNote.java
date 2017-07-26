@@ -66,6 +66,7 @@ public class AddNote extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.publish_action:
                 mydb.insertNote(addText.getText(), noteDate);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

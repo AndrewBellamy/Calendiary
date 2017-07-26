@@ -38,19 +38,24 @@ public class Home extends AppCompatActivity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array_list);
 
         ListView obj = (ListView) findViewById(R.id.noteList);
-        obj.setAdapter(arrayAdapter);
-        obj.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-               //method and intent behind selecting a note entry
-               Bundle dataBundle = new Bundle();
-               dataBundle.putInt("id", arg2);
+        if (array_list.isEmpty()) {
+            obj.setEmptyView( findViewById(R.id.emptyListView));
+        } else {
+            obj.setAdapter(arrayAdapter);
+            obj.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                    //method and intent behind selecting a note entry
+                    Bundle dataBundle = new Bundle();
+                    dataBundle.putInt("id", arg2);
 
-               Intent intent = new Intent(getApplicationContext(), DisplayNote.class);
-               intent.putExtras(dataBundle);
-               startActivity(intent);
-           }
-        });
+                    Intent intent = new Intent(getApplicationContext(), DisplayNote.class);
+                    intent.putExtras(dataBundle);
+                    startActivity(intent);
+                }
+            });
+        }
+
         currentDateText.setText((CharSequence) currentDateString);
         currentDateText.setFocusable(false);
         currentDateText.setClickable(false);
