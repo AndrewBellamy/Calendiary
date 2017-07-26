@@ -3,6 +3,7 @@ package com.example.thean.calling;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,10 +20,14 @@ import java.util.Date;
 public class Home extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.thean.helloandroid.MESSAGE";
-    DBHelper mydb;
+    private static final int CHANGE_DATE = 1;
+    DBControl mydb;
     Date current_date;
     EditText currentDateText;
     String currentDateString;
+    ArrayList<String> array_list;
+    ArrayAdapter<String> arrayAdapter;
+    ListView noteList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +38,26 @@ public class Home extends AppCompatActivity {
         currentDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(current_date);
         currentDateText = (EditText) findViewById(R.id.currentDateText);
 
-        mydb = new DBHelper(this);
-        ArrayList<String> array_list = mydb.getDataByDate(current_date.getTime());
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array_list);
+        mydb = new DBControl(this);
+        noteList = (ListView) findViewById(R.id.noteList);
 
-        ListView obj = (ListView) findViewById(R.id.noteList);
-        if (array_list.isEmpty()) {
-            obj.setEmptyView( findViewById(R.id.emptyListView));
+        retrieveNotes();
+        currentDateText.setText((CharSequence) currentDateString);
+        currentDateText.setFocusable(false);
+        currentDateText.setClickable(false);
+    }
+
+    //Database call and list population
+    public void retrieveNotes() {
+        array_list = mydb.getDataByDate(current_date.getTime());
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array_list);
+        Log.i("List count", String.valueOf(array_list.size()));
+        if (array_list.size() == 0) {
+            noteList.setAdapter(arrayAdapter);
+            noteList.setEmptyView( findViewById(R.id.emptyListView));
         } else {
-            obj.setAdapter(arrayAdapter);
-            obj.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            noteList.setAdapter(arrayAdapter);
+            noteList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                     //method and intent behind selecting a note entry
@@ -55,19 +70,7 @@ public class Home extends AppCompatActivity {
                 }
             });
         }
-
-        currentDateText.setText((CharSequence) currentDateString);
-        currentDateText.setFocusable(false);
-        currentDateText.setClickable(false);
     }
-
-    /*
-    //TODO: include the returned results to set the currentDate
-    @Override
-    protected void onActivityResult() {
-
-    }
-    */
 
     //Setting the main menu for the home view
     @Override
@@ -83,15 +86,36 @@ public class Home extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.change_date:
                 Intent intentDate = new Intent(getApplicationContext(),DateSelect.class);
-                startActivity(intentDate);
+                intentDate.putExtra("current_date", current_date.getTime());
+                startActivityForResult(intentDate, CHANGE_DATE);
                 return true;
             case R.id.add_entry:
                 Intent intentAdd = new Intent(getApplicationContext(),AddNote.class);
                 intentAdd.putExtra("longDate", current_date.getTime());
-                startActivity(intentAdd);
+                startActivityForResult(intentAdd, CHANGE_DATE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("request:", String.valueOf(requestCode));
+        Log.i("result:", String.valueOf(resultCode));
+        if (requestCode == CHANGE_DATE) {
+            if (resultCode == RESULT_OK) {
+                Date defaultDate = new Date();
+                long new_date = data.getLongExtra("callback_date", defaultDate.getTime());
+                current_date = new Date(new_date);
+
+                retrieveNotes();
+                currentDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(current_date);
+
+                currentDateText.setText((CharSequence) currentDateString);
+                currentDateText.setFocusable(false);
+                currentDateText.setClickable(false);
+            }
         }
     }
 

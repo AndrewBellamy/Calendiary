@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class AddNote extends AppCompatActivity {
 
-    private DBHelper mydb;
+    private DBControl mydb;
     EditText addText;
     long noteDate;
 
@@ -28,7 +28,7 @@ public class AddNote extends AppCompatActivity {
         Date defaultDate = new Date();
         noteDate = intentAdd.getLongExtra("longDate", defaultDate.getTime());
 
-        mydb = new DBHelper(this);
+        mydb = new DBControl(this);
         //Bundle extras = getIntent().getExtras();
         /*
         if (extras != null) {

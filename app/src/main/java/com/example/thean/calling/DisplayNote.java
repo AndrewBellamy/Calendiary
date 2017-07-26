@@ -7,7 +7,7 @@ import android.widget.EditText;
 
 public class DisplayNote extends AppCompatActivity {
 
-    private DBHelper mydb;
+    private DBControl mydb;
     EditText editText;
 
     @Override
@@ -18,19 +18,19 @@ public class DisplayNote extends AppCompatActivity {
         //set the editText element
         editText = (EditText) findViewById(R.id.editText);
 
-        mydb = new DBHelper(this);
+        mydb = new DBControl(this);
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
             int Value = extras.getInt("id");
             if(Value>0) {
-                Cursor rs = mydb.getData(Value);
-                rs.moveToFirst();
+                Cursor response = mydb.getData(Value);
+                response.moveToFirst();
 
-                String entry = rs.getString(rs.getColumnIndex(DBHelper.NOTES_ENTRY));
+                String entry = response.getString(response.getColumnIndex(DBControl.NOTES_ENTRY));
 
-                if (!rs.isClosed()) {
-                    rs.close();
+                if (!response.isClosed()) {
+                    response.close();
                 }
 
                 editText.setText((CharSequence) entry);

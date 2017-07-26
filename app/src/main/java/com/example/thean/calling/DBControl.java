@@ -11,7 +11,6 @@ import android.util.Log;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by Andrew Bellamy for SIT207 Assignment 1
@@ -19,14 +18,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * 24/07/2017
  */
 
-public class DBHelper extends SQLiteOpenHelper {
+public class DBControl extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "MyDBName.db";
     public static final String NOTES_ID = "id";
     public static final String NOTES_DATE = "entrydate";
     public static final String NOTES_ENTRY = "entry";
 
-    public DBHelper(Context context) {
+    public DBControl(Context context) {
         super(context, DATABASE_NAME , null, 1);
     }
 
@@ -54,8 +53,9 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateNote(Integer id, String entry, Date entrydate) {
+    public boolean updateNote(Integer id, String entry, long entrylongdate) {
         SQLiteDatabase db = this.getWritableDatabase();
+        Date entrydate = new Date(entrylongdate);
         ContentValues contentValues = new ContentValues();
         contentValues.put("entrydate", String.valueOf(entrydate));
         contentValues.put("entry", entry);
@@ -83,18 +83,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public ArrayList<String> getDataByDate(long selectedDateLong) {
         ArrayList<String> array_list = new ArrayList<String>();
-        Log.i("long date", String.valueOf(selectedDateLong));
         Date selectedDate = new Date(selectedDateLong);
-        Log.i("date", String.valueOf(selectedDate));
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM notes WHERE entrydate=Date('"+String.valueOf(selectedDate)+"')", null);
-        res.moveToFirst();
+        Log.i("selected date", String.valueOf(selectedDate));
+        Cursor response = db.rawQuery("SELECT * FROM notes WHERE entrydate=Date('"+String.valueOf(selectedDate)+"')", null);
+        response.moveToFirst();
 
-        while(res.isAfterLast() == false) {
-            Log.i("db entry", res.getString(res.getColumnIndex("entrydate")));
-            Log.i("db entry", res.getString(res.getColumnIndex("id")));
-            array_list.add(res.getString(res.getColumnIndex("entry")));
-            res.moveToNext();
+        while(response.isAfterLast() == false) {
+            array_list.add(response.getString(response.getColumnIndex("entry")));
+            Log.i("date", response.getString(response.getColumnIndex("entrydate")));
+            response.moveToNext();
         }
         return array_list;
     }
