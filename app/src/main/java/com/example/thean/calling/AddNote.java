@@ -29,29 +29,8 @@ public class AddNote extends AppCompatActivity {
         noteDate = intentAdd.getLongExtra("longDate", defaultDate.getTime());
 
         mydb = new DBControl(this);
-        //Bundle extras = getIntent().getExtras();
-        /*
-        if (extras != null) {
-            int Value = extras.getInt("id");
-            if(Value>0) {
-                Cursor rs = mydb.getData(Value);
-                rs.moveToFirst();
-
-                String entry = rs.getString(rs.getColumnIndex(DBHelper.NOTES_ENTRY));
-
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
-
-                addText.setText((CharSequence) entry);
-                addText.setFocusable(false);
-                addText.setClickable(false);
-            }
-        }
-        */
     }
 
-    //onOptionsItemSelected()
     //Setting the main menu for the home view
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,6 +45,11 @@ public class AddNote extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.publish_action:
                 mydb.insertNote(addText.getText(), noteDate);
+                if(getParent() == null) {
+                    setResult(RESULT_OK);
+                } else {
+                    getParent().setResult(RESULT_OK);
+                }
                 finish();
                 return true;
             default:

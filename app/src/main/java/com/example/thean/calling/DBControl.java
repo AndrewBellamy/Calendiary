@@ -6,11 +6,13 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Andrew Bellamy for SIT207 Assignment 1
@@ -53,12 +55,10 @@ public class DBControl extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateNote(Integer id, String entry, long entrylongdate) {
+    public boolean updateNote(Integer id, Editable entry) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Date entrydate = new Date(entrylongdate);
         ContentValues contentValues = new ContentValues();
-        contentValues.put("entrydate", String.valueOf(entrydate));
-        contentValues.put("entry", entry);
+        contentValues.put("entry", String.valueOf(entry));
         db.update("notes", contentValues, "id = ?", new String[] {Integer.toString(id)});
         return true;
     }
@@ -71,8 +71,8 @@ public class DBControl extends SQLiteOpenHelper {
     //general predicate methods
     public Cursor getData(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM notes WHERE id="+id+"", null);
-        return res;
+        Cursor response = db.rawQuery("SELECT * FROM notes WHERE id="+id+"", null);
+        return response;
     }
 
     public int numberOfRows() {
@@ -81,19 +81,22 @@ public class DBControl extends SQLiteOpenHelper {
         return numRows;
     }
 
-    public ArrayList<String> getDataByDate(long selectedDateLong) {
-        ArrayList<String> array_list = new ArrayList<String>();
+    public Bundle getDataByDate(long selectedDateLong) {
+        ArrayList<String> array_entries = new ArrayList<String> ();
+        ArrayList<String> array_ids = new ArrayList<String> ();
+        Bundle responseBundle = new Bundle();
         Date selectedDate = new Date(selectedDateLong);
         SQLiteDatabase db = this.getReadableDatabase();
-        Log.i("selected date", String.valueOf(selectedDate));
         Cursor response = db.rawQuery("SELECT * FROM notes WHERE entrydate=Date('"+String.valueOf(selectedDate)+"')", null);
         response.moveToFirst();
 
         while(response.isAfterLast() == false) {
-            array_list.add(response.getString(response.getColumnIndex("entry")));
-            Log.i("date", response.getString(response.getColumnIndex("entrydate")));
+            array_entries.add(response.getString(response.getColumnIndex("entry")));
+            array_ids.add(response.getString(response.getColumnIndex("id")));
             response.moveToNext();
         }
-        return array_list;
+        responseBundle.putStringArrayList("ids", array_ids);
+        responseBundle.putStringArrayList("entries", array_entries);
+        return responseBundle;
     }
 }

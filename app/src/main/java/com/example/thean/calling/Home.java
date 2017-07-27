@@ -11,21 +11,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Home extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.thean.helloandroid.MESSAGE";
     private static final int CHANGE_DATE = 1;
+    private static final int ADD_NOTE = 2;
+    private static final int DISPLAY_NOTE = 3;
     DBControl mydb;
     Date current_date;
     EditText currentDateText;
     String currentDateString;
     ArrayList<String> array_list;
+    ArrayList<String> array_identifiers;
     ArrayAdapter<String> arrayAdapter;
     ListView noteList;
 
@@ -49,9 +55,10 @@ public class Home extends AppCompatActivity {
 
     //Database call and list population
     public void retrieveNotes() {
-        array_list = mydb.getDataByDate(current_date.getTime());
+        Bundle dataBundle = mydb.getDataByDate(current_date.getTime());
+        array_list = dataBundle.getStringArrayList("entries");
+        array_identifiers = dataBundle.getStringArrayList("ids");
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array_list);
-        Log.i("List count", String.valueOf(array_list.size()));
         if (array_list.size() == 0) {
             noteList.setAdapter(arrayAdapter);
             noteList.setEmptyView( findViewById(R.id.emptyListView));
@@ -61,12 +68,13 @@ public class Home extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                     //method and intent behind selecting a note entry
-                    Bundle dataBundle = new Bundle();
-                    dataBundle.putInt("id", arg2);
+                    Bundle sendBundle = new Bundle();
+                    Integer selectionID = Integer.parseInt(array_identifiers.get(arg2));
+                    sendBundle.putInt("id", selectionID);
 
                     Intent intent = new Intent(getApplicationContext(), DisplayNote.class);
-                    intent.putExtras(dataBundle);
-                    startActivity(intent);
+                    intent.putExtras(sendBundle);
+                    startActivityForResult(intent, DISPLAY_NOTE);
                 }
             });
         }
@@ -92,7 +100,7 @@ public class Home extends AppCompatActivity {
             case R.id.add_entry:
                 Intent intentAdd = new Intent(getApplicationContext(),AddNote.class);
                 intentAdd.putExtra("longDate", current_date.getTime());
-                startActivityForResult(intentAdd, CHANGE_DATE);
+                startActivityForResult(intentAdd, ADD_NOTE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -101,8 +109,6 @@ public class Home extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("request:", String.valueOf(requestCode));
-        Log.i("result:", String.valueOf(resultCode));
         if (requestCode == CHANGE_DATE) {
             if (resultCode == RESULT_OK) {
                 Date defaultDate = new Date();
@@ -115,6 +121,23 @@ public class Home extends AppCompatActivity {
                 currentDateText.setText((CharSequence) currentDateString);
                 currentDateText.setFocusable(false);
                 currentDateText.setClickable(false);
+            }
+        }
+        if (requestCode == ADD_NOTE) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "Note Saved", Toast.LENGTH_SHORT).show();
+                retrieveNotes();
+            }
+        }
+        if (requestCode == DISPLAY_NOTE) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "Note Changed", Toast.LENGTH_SHORT).show();
+                retrieveNotes();
+            }
+            if (resultCode == RESULT_FIRST_USER) {
+                Toast.makeText(getApplicationContext(), "Note Deleted", Toast.LENGTH_SHORT).show();
+                retrieveNotes();
+
             }
         }
     }
