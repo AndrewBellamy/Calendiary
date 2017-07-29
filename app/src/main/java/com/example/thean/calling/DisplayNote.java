@@ -3,13 +3,19 @@ package com.example.thean.calling;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+/**
+ * Created by Andrew Bellamy for SIT207 Assignment 1
+ * Student ID : 215240036
+ * 20/07/2017
+ */
+
 public class DisplayNote extends AppCompatActivity {
 
+    //Global Variables
     private DBControl mydb;
     EditText editText;
     int identifier;
@@ -19,12 +25,13 @@ public class DisplayNote extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_note);
 
-        //set the editText element
+        //Initialise editText and DB, dropping in the context
         editText = (EditText) findViewById(R.id.editText);
-
         mydb = new DBControl(this);
+
         Bundle extras = getIntent().getExtras();
 
+        //If a note id is passed through the intent extras, proceed, otherwise throw us out
         if (extras != null) {
             identifier = extras.getInt("id");
             if(identifier > 0) {
@@ -39,10 +46,17 @@ public class DisplayNote extends AppCompatActivity {
 
                 editText.setText((CharSequence) entry);
             }
+        } else {
+            if(getParent() == null) {
+                setResult(RESULT_CANCELED);
+            } else {
+                getParent().setResult(RESULT_CANCELED);
+            }
+            finish();
         }
     }
 
-    //Setting the main menu for the home view
+    //Setting the edit menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_menu, menu);

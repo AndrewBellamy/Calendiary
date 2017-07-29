@@ -3,7 +3,6 @@ package com.example.thean.calling;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,21 +10,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+
+/**
+ * Created by Andrew Bellamy for SIT207 Assignment 1
+ * Student ID : 215240036
+ * 20/07/2017
+ */
 
 public class Home extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "com.example.thean.helloandroid.MESSAGE";
+    //Constants
     private static final int CHANGE_DATE = 1;
     private static final int ADD_NOTE = 2;
     private static final int DISPLAY_NOTE = 3;
+
+    //Global Variables
     DBControl mydb;
     Date current_date;
     EditText currentDateText;
@@ -40,20 +45,29 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //On entering the single instance, set the date to today
         current_date = new Date();
         currentDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(current_date);
-        currentDateText = (EditText) findViewById(R.id.currentDateText);
 
+        //Initialise the listView and DB, dropping in the context
         mydb = new DBControl(this);
         noteList = (ListView) findViewById(R.id.noteList);
 
+        //Initial call for today's notes
         retrieveNotes();
+
+        //Sets the date label to today
+        currentDateText = (EditText) findViewById(R.id.currentDateText);
         currentDateText.setText((CharSequence) currentDateString);
         currentDateText.setFocusable(false);
         currentDateText.setClickable(false);
     }
 
-    //Database call and list population
+    /**
+     * Calls the getDataByDate method of the DBControl class, passing in the set date in milliseconds.
+     * Populates the list view with the array list, using the array adapter.
+     * No parameters required, uses globals.
+     */
     public void retrieveNotes() {
         Bundle dataBundle = mydb.getDataByDate(current_date.getTime());
         array_list = dataBundle.getStringArrayList("entries");
@@ -80,7 +94,7 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    //Setting the main menu for the home view
+    //Setting the main menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -142,6 +156,13 @@ public class Home extends AppCompatActivity {
         }
     }
 
+    /**
+     * Cancel arrows for all activities leading off from home.
+     *
+     * @param keycode
+     * @param event
+     * @return
+     */
     public boolean onKeyDown(int keycode, KeyEvent event) {
         if (keycode == KeyEvent.KEYCODE_BACK) {
             moveTaskToBack(true);

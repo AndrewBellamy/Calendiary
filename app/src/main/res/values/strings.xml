@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Calendiary</string>
+    <string name="app_name">Date Notes</string>
     <string name="text_placeholder">Enter something...</string>
     <string name="add_title">Add Note</string>
     <string name="change_date">Change Date</string>
