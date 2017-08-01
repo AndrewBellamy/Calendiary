@@ -14,6 +14,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:calendarTextColor="@android:color/holo_blue_light"
+        android:headerBackground="@color/primary_text_material_light"
         android:saveEnabled="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -60,7 +61,7 @@ public class Home extends AppCompatActivity {
         currentDateText = (EditText) findViewById(R.id.currentDateText);
         currentDateText.setText((CharSequence) currentDateString);
         currentDateText.setFocusable(false);
-        currentDateText.setClickable(false);
+        currentDateText.setClickable(true);
     }
 
     /**
@@ -75,7 +76,6 @@ public class Home extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array_list);
         if (array_list.size() == 0) {
             noteList.setAdapter(arrayAdapter);
-            noteList.setEmptyView( findViewById(R.id.emptyListView));
         } else {
             noteList.setAdapter(arrayAdapter);
             noteList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -94,6 +94,16 @@ public class Home extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fires the event handler for pressing the date label. Navigates to the
+     * date selection activity and passes in the current date in the intent
+     */
+    public void onChangeDate(View view) {
+        Intent intentDate = new Intent(this, DateSelect.class);
+        intentDate.putExtra("current_date", current_date.getTime());
+        startActivityForResult(intentDate, CHANGE_DATE);
+    }
+
     //Setting the main menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,16 +116,16 @@ public class Home extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         switch(item.getItemId()) {
-            case R.id.change_date:
-                Intent intentDate = new Intent(getApplicationContext(),DateSelect.class);
-                intentDate.putExtra("current_date", current_date.getTime());
-                startActivityForResult(intentDate, CHANGE_DATE);
-                return true;
             case R.id.add_entry:
                 Intent intentAdd = new Intent(getApplicationContext(),AddNote.class);
                 intentAdd.putExtra("longDate", current_date.getTime());
                 startActivityForResult(intentAdd, ADD_NOTE);
                 return true;
+            case R.id.preferences_open:
+                Intent intentPref = new Intent(getApplicationContext(),preferencesActivity.class);
+                startActivity(intentPref);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -134,7 +144,7 @@ public class Home extends AppCompatActivity {
 
                 currentDateText.setText((CharSequence) currentDateString);
                 currentDateText.setFocusable(false);
-                currentDateText.setClickable(false);
+                currentDateText.setClickable(true);
             }
         }
         if (requestCode == ADD_NOTE) {
